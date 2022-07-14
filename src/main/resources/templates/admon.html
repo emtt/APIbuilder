@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link th:rel="stylesheet"  th:href="@{js/bootstraptreeview/bootstrap-treeview.min.css}">
+    <meta charset="UTF-8">
+    <title>APIBUILDER - ADMIN</title>
+</head>
+<body>
+<h2>ADMINISTRADOR</h2>
+
+<a href="#" th:text="${userName}" class="d-block">User Name</a>
+</hr>
+<h4>DATA TREE DEMO</h4>
+<div id="datatree"></div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.slim.js" integrity="sha256-HwWONEZrpuoh951cQD1ov2HUK5zA5DwJ1DNUXaM6FsY=" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+<script th:src="@{js/bootstraptreeview/bootstrap-treeview.min.js}"></script>
+<script th:inline="javascript">
+   /* var data = {
+        "title": "Person",
+        "type": "object",
+        "properties": {
+            "firstName": {
+                "type": "string"
+            },
+            "lastName": {
+                "type": "string"
+            },
+            "age": {
+                "description": "Age in years",
+                "type": "integer",
+                "minimum": 0
+            }
+        },
+        "required": ["firstName", "lastName"]
+    };*/
+
+    var data = /*[[${jsonData}]]*/;
+    $(document).ready(function() {
+        function format_for_treeview(data, arr) {
+            for (var key in data) {
+                if (Array.isArray(data[key]) || data[key].toString() === "[object Object]") {
+                    // when data[key] is an array or object
+                    var nodes = [];
+                    var completedNodes = format_for_treeview(data[key], nodes);
+                    arr.push({
+                        text: key,
+                        nodes: completedNodes
+                    });
+                } else {
+                    // when data[key] is just strings or integer values
+                    arr.push({
+                        text: key + " : " + data[key]
+                    });
+                }
+            }
+            return arr;
+        }
+
+
+        $("#datatree").treeview({
+            data: format_for_treeview(data, []),
+            levels: 10,
+            color: "#428bca",
+            backColor: 'white',
+            expandIcon: "glyphicon glyphicon-plus",
+            collapseIcon: "glyphicon glyphicon-minus",
+            showTags: true,
+            onNodeSelected: function(event, data) {
+               console.log("NODE ID" + data.nodeId)
+            }
+        });
+
+        //$('#tree').treeview('getSelected', nodeId);
+
+    });
+</script>
+</body>
+</html>
